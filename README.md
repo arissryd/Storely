@@ -1,15 +1,275 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# 🛒 Smart Catalog - Platform Manajemen Katalog UMKM
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Platform web berbasis Laravel 13 untuk memudahkan UMKM dalam mengelola ribuan produk dengan kategori yang fleksibel.
 
-## About Laravel
+![Laravel](https://img.shields.io/badge/Laravel-13.x-red.svg)
+![PHP](https://img.shields.io/badge/PHP-^8.3-blue.svg)
+![MySQL](https://img.shields.io/badge/MySQL-5.7+-orange.svg)
+![License](https://img.shields.io/badge/License-MIT-green.svg)
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## ✨ Fitur Utama
+
+### 🔐 Security & Authentication
+- User registration dengan validasi email
+- Login dengan enkripsi password bcrypt
+- Session management berbasis database
+- Middleware protection untuk protected routes
+- Role-based access control (Merchant/Admin)
+
+### 📦 Product Management
+- CRUD lengkap untuk kategori dan produk
+- Multi-merchant support dengan data isolation
+- Slug generation otomatis untuk kategori
+- Harga, stok, dan deskripsi produk yang flexible
+
+### 📸 File Management
+- Upload foto produk dengan validasi
+- Supported formats: JPEG, PNG, JPG, GIF
+- Maximum file size: 2MB
+- Automatic cleanup saat update/delete
+- Public access via storage link
+
+### 📊 Dashboard
+- Welcome message dinamis berdasarkan user
+- Statistics: Total kategori, total produk
+- Recent products list
+- Quick action buttons
+
+### 🎨 User Interface
+- Bootstrap 5 responsive design
+- Template inheritance/layouting
+- Navbar dengan user dropdown
+- Responsive sidebar navigation
+- Alert notifications (success, warning, danger)
+
+## 🚀 Quick Start
+
+### Prerequisites
+- PHP 8.3+
+- MySQL 5.7+
+- Composer
+- XAMPP atau sejenisnya
+
+### Installation
+
+1. **Clone repository**
+   ```bash
+   git clone <repository-url>
+   cd uts
+   ```
+
+2. **Install dependencies**
+   ```bash
+   composer install
+   ```
+
+3. **Setup environment**
+   ```bash
+   cp .env.example .env
+   php artisan key:generate
+   ```
+
+4. **Configure database** - Edit `.env`:
+   ```env
+   DB_CONNECTION=mysql
+   DB_HOST=127.0.0.1
+   DB_PORT=3306
+   DB_DATABASE=uts_catalog
+   DB_USERNAME=root
+   DB_PASSWORD=
+   ```
+
+5. **Create database**
+   ```bash
+   mysql -u root
+   CREATE DATABASE uts_catalog;
+   exit;
+   ```
+
+6. **Run migrations & seed**
+   ```bash
+   php artisan migrate:refresh --seed
+   ```
+
+7. **Create storage link**
+   ```bash
+   php artisan storage:link
+   ```
+
+8. **Start development server**
+   ```bash
+   php artisan serve
+   ```
+
+   Akses aplikasi di: **http://localhost:8000**
+
+## 🧪 Test Account
+
+| Field | Value |
+|-------|-------|
+| Email | merchant@test.com |
+| Password | password123 |
+
+## 📁 Project Structure
+
+```
+smart-catalog/
+├── app/
+│   ├── Http/
+│   │   ├── Controllers/
+│   │   │   ├── AuthController.php
+│   │   │   ├── DashboardController.php
+│   │   │   ├── CategoryController.php
+│   │   │   └── ProductController.php
+│   │   └── Middleware/
+│   │       ├── EnsureUserIsAuthenticated.php
+│   │       └── RedirectIfAuthenticated.php
+│   └── Models/
+│       ├── User.php
+│       ├── Category.php
+│       └── Product.php
+├── database/
+│   ├── migrations/
+│   └── seeders/
+├── resources/
+│   └── views/
+│       ├── layouts/
+│       │   └── app.blade.php (Master layout)
+│       ├── auth/
+│       │   ├── login.blade.php
+│       │   └── register.blade.php
+│       ├── categories/
+│       ├── products/
+│       └── dashboard.blade.php
+└── routes/
+    └── web.php
+```
+
+## 🗄️ Database Schema
+
+### Users Table
+```sql
+id (PK) | name | email (UNIQUE) | password (hashed) | role | timestamps
+```
+
+### Categories Table
+```sql
+id (PK) | merchant_id (FK) | name (UNIQUE) | description | slug (UNIQUE) | timestamps
+```
+
+### Products Table
+```sql
+id (PK) | merchant_id (FK) | category_id (FK) | name | description | price | photo | stock | timestamps
+```
+
+## 📖 API Routes
+
+### Authentication
+```
+POST   /login          - Login user
+POST   /register       - Register new user
+POST   /logout         - Logout user
+```
+
+### Dashboard
+```
+GET    /dashboard      - View dashboard
+```
+
+### Categories
+```
+GET    /categories           - List categories
+GET    /categories/create    - Create form
+POST   /categories           - Store category
+GET    /categories/{id}/edit - Edit form
+PUT    /categories/{id}      - Update category
+DELETE /categories/{id}      - Delete category
+```
+
+### Products
+```
+GET    /products           - List products
+GET    /products/create    - Create form
+POST   /products           - Store product (with file upload)
+GET    /products/{id}/edit - Edit form
+PUT    /products/{id}      - Update product
+DELETE /products/{id}      - Delete product
+```
+
+## 🔒 Security Features
+
+✅ Password hashing dengan bcrypt  
+✅ CSRF protection di semua forms  
+✅ SQL injection prevention dengan parameterized queries  
+✅ File upload validation  
+✅ Session-based authentication  
+✅ Middleware authorization checks  
+✅ Ownership verification pada resource updates  
+
+## 📱 Responsive Design
+
+- Mobile-first approach
+- Tested on various screen sizes:
+  - ✓ Mobile (320px - 480px)
+  - ✓ Tablet (768px - 1024px)
+  - ✓ Desktop (1024px+)
+
+## 🧪 Testing Guide
+
+Lihat file `TEST_SCENARIOS.md` untuk comprehensive testing guide dengan:
+- Login/Register testing
+- CRUD operations testing
+- File upload validation
+- Session management
+- Multi-merchant isolation
+- UI/UX responsiveness
+- Error handling
+- Performance testing
+
+## 📝 Documentation
+
+- **IMPLEMENTATION.md** - Detailed implementation guide
+- **TEST_SCENARIOS.md** - Comprehensive test scenarios
+- **README.md** - This file
+
+## 🐛 Troubleshooting
+
+### Storage Link Error
+```bash
+php artisan storage:link
+```
+
+### Database Migration Error
+```bash
+php artisan migrate:refresh
+```
+
+### Session/Database Error
+Pastikan MySQL running dan `.env` configuration benar
+
+## 🤝 Contributing
+
+1. Create feature branch
+2. Make changes
+3. Commit dengan clear messages
+4. Push to repository
+
+## 📄 License
+
+This project is open-sourced under the MIT license.
+
+## 👨‍💻 Author
+
+Smart Catalog Development Team  
+**Version:** 1.0.0  
+**Last Updated:** May 2026
+
+---
+
+**Status:** ✅ Ready for Production
+
+Untuk informasi lebih lanjut, lihat dokumentasi yang tersedia di folder ini.
+
 
 - [Simple, fast routing engine](https://laravel.com/docs/routing).
 - [Powerful dependency injection container](https://laravel.com/docs/container).
