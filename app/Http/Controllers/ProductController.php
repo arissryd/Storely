@@ -45,7 +45,7 @@ class ProductController extends Controller
             'description' => 'nullable|string',
             'price' => 'required|numeric|min:0',
             'stock' => 'required|integer|min:0',
-            'photo' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'photo' => 'required|image|mimes:jpeg,png,jpg,gif|max:102040',
         ], [
             'name.required' => 'Nama produk harus diisi',
             'name.min' => 'Nama produk minimal 3 karakter',
@@ -58,7 +58,7 @@ class ProductController extends Controller
             'photo.required' => 'Foto produk harus diunggah',
             'photo.image' => 'File harus berupa gambar',
             'photo.mimes' => 'Format gambar harus jpeg, png, jpg, atau gif',
-            'photo.max' => 'Ukuran gambar maksimal 2MB',
+            'photo.max' => 'Ukuran gambar maksimal 10MB',
         ]);
 
         // Upload photo
@@ -114,7 +114,7 @@ class ProductController extends Controller
             'description' => 'nullable|string',
             'price' => 'required|numeric|min:0',
             'stock' => 'required|integer|min:0',
-            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:102040',
         ], [
             'name.required' => 'Nama produk harus diisi',
             'name.min' => 'Nama produk minimal 3 karakter',
@@ -126,7 +126,7 @@ class ProductController extends Controller
             'stock.integer' => 'Stok harus berupa angka bulat',
             'photo.image' => 'File harus berupa gambar',
             'photo.mimes' => 'Format gambar harus jpeg, png, jpg, atau gif',
-            'photo.max' => 'Ukuran gambar maksimal 2MB',
+            'photo.max' => 'Ukuran gambar maksimal 10MB',
         ]);
 
         // Handle photo update

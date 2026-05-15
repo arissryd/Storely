@@ -104,7 +104,7 @@
                             <input type="file" class="form-control @error('photo') is-invalid @enderror"
                                 id="photo" name="photo" accept="image/*" required>
                             <small class="text-muted d-block mt-2">
-                                Format: JPG, PNG, GIF | Ukuran maksimal: 2MB
+                                Format: JPG, PNG, GIF | Ukuran maksimal: 10MB
                             </small>
                             @error('photo')
                                 <div class="invalid-feedback">
