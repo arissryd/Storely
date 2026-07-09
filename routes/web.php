@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\TransactionController;
 use App\Http\Middleware\EnsureUserIsAuthenticated;
 use App\Http\Middleware\RedirectIfAuthenticated;
 
@@ -57,4 +58,16 @@ Route::middleware(EnsureUserIsAuthenticated::class)->group(function () {
         Route::put('/{product}', [ProductController::class, 'update'])->name('update');
         Route::delete('/{product}', [ProductController::class, 'destroy'])->name('destroy');
     });
+
+    /**
+ * Transactions
+ */
+Route::prefix('transactions')->name('transactions.')->group(function () {
+    Route::get('/', [TransactionController::class, 'index'])->name('index');
+    Route::get('/create', [TransactionController::class, 'create'])->name('create');
+    Route::post('/', [TransactionController::class, 'store'])->name('store');
+    Route::get('/{transaction}/edit', [TransactionController::class, 'edit'])->name('edit');
+    Route::put('/{transaction}', [TransactionController::class, 'update'])->name('update');
+    Route::delete('/{transaction}', [TransactionController::class, 'destroy'])->name('destroy');
+});
 });

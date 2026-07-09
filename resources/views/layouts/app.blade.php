@@ -239,9 +239,14 @@
                             <i class="bi bi-box"></i> Produk
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('transactions.*') ? 'active' : '' }}"
+                             href="{{ route('transactions.index') }}">
+                             <i class="bi bi-cash-stack"></i> Transaksi
+                         </a>
+                    </li>
                 </ul>
             </nav>
-
             <!-- Main Content -->
             <main class="col-md-10 main-content">
                 @if ($message = session('success'))
