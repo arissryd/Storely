@@ -14,61 +14,65 @@
     </a>
 </div>
 
+<div class="mb-3">
+    <a href="{{ route('transactions.export.excel') }}" class="btn btn-success fw-bold me-2">
+        📊 Export Excel
+    </a>
+    <a href="{{ route('transactions.export.pdf') }}" target="_blank" class="btn btn-danger fw-bold">
+        📄 Cetak PDF
+    </a>
+</div>
+
 <div class="card shadow-sm border-0">
     <div class="card-body p-0">
         <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
-                <thead class="table-light text-secondary">
-                    <tr>
-                        <th class="text-center" style="width: 7%">No</th>
-                        <th>No / Kode Transaksi</th>
-                        <th class="text-center">Tipe</th>
-                        <th>Produk</th>
-                        <th class="text-center">Qty</th>
-                        <th>Merchant Code</th>
-                        <th>Tanggal Transaksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                @forelse($transactions as $key => $transaction)
-                    <tr>
-                        <td class="text-center text-muted font-weight-bold">{{ $key + 1 }}</td>
-                        <td>
-                            <span class="text-dark font-weight-bold">{{ $transaction->transaction_number }}</span>
-                        </td>
-                        <td class="text-center">
-                            @if($transaction->type == 'sales')
-                                <span class="badge bg-success px-2 py-1">Sales</span>
-                            @else
-                                <span class="badge bg-primary px-2 py-1">Stock In</span>
-                            @endif
-                        </td>
-                        <td>
-                            <span class="text-dark font-weight-bold">{{ $transaction->product->name }}</span>
-                        </td>
-                        <td class="text-center">
-                            <span class="badge bg-light text-dark border px-2 py-1">{{ $transaction->qty }}</span>
-                        </td>
-                        <td>
-                            @if($transaction->merchant_code)
-                                <span class="text-secondary font-monospace">{{ $transaction->merchant_code }}</span>
-                            @else
-                                <span class="text-muted-500">-</span>
-                            @endif
-                        </td>
-                        <td class="text-secondary">
-                            {{ $transaction->created_at->format('d M Y, H:i') }}
-                        </td>
-                    </tr>
-                @empty
-                    <tr>
-                        <td colspan="7" class="text-center py-4 text-muted">
-                            Belum ada data transaksi yang tercatat.
-                        </td>
-                    </tr>
-                @endforelse
-                </tbody>
-            </table>
+            <table class="table table-striped table-hover align-middle">
+    <thead class="table-dark">
+        <tr>
+            <th>Kode / No. Transaksi</th>
+            <th>Tanggal</th>
+            <th>Produk</th>
+            <th>Qty</th>
+            <th>Tipe Transaksi</th>
+            <th>Merchant Code</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach($transactions as $transaction)
+        <tr>
+            <!-- Nomor Transaksi / Stock Code otomatis berdasarkan tipe -->
+            <td>
+                @if($transaction->type == 'sales')
+                    <span class="badge bg-success">TRX-{{ str_pad($transaction->id, 4, '0', STR_PAD_LEFT) }}</span>
+                @else
+                    <span class="badge bg-info">STK-{{ str_pad($transaction->id, 4, '0', STR_PAD_LEFT) }}</span>
+                @endif
+            </td>
+            
+            <!-- Tanggal (Auto) -->
+            <td>{{ $transaction->created_at->format('d-m-Y H:i') }}</td>
+            
+            <!-- Nama Produk -->
+            <td class="fw-bold">{{ $transaction->product->name ?? 'Produk Dihapus' }}</td>
+            
+            <!-- Qty -->
+            <td>{{ $transaction->qty }} Pcs</td>
+            
+            <!-- Tipe -->
+            <td>{{ $transaction->type == 'sales' ? 'Penjualan' : 'Barang Masuk' }}</td>
+            
+            <!-- Merchant Code (Khusus Sales) -->
+            <td>
+    @if($transaction->type == 'sales')
+        <span class="text-muted fw-bold">{{ $transaction->merchant_code }}</span>
+    @else
+        <span class="text-muted">-</span>
+    @endif
+</td>
+        </tr>
+        @endforeach
+    </tbody>
+</table>
         </div>
     </div>
 </div>

@@ -59,15 +59,20 @@ Route::middleware(EnsureUserIsAuthenticated::class)->group(function () {
         Route::delete('/{product}', [ProductController::class, 'destroy'])->name('destroy');
     });
 
-    /**
- * Transactions
- */
-Route::prefix('transactions')->name('transactions.')->group(function () {
-    Route::get('/', [TransactionController::class, 'index'])->name('index');
-    Route::get('/create', [TransactionController::class, 'create'])->name('create');
-    Route::post('/', [TransactionController::class, 'store'])->name('store');
-    Route::get('/{transaction}/edit', [TransactionController::class, 'edit'])->name('edit');
-    Route::put('/{transaction}', [TransactionController::class, 'update'])->name('update');
-    Route::delete('/{transaction}', [TransactionController::class, 'destroy'])->name('destroy');
-});
+   /**
+     * Transactions
+     */
+    Route::prefix('transactions')->name('transactions.')->group(function () {
+        Route::get('/', [TransactionController::class, 'index'])->name('index');
+        Route::get('/create', [TransactionController::class, 'create'])->name('create');
+        
+        
+        Route::get('/export/excel', [TransactionController::class, 'exportExcel'])->name('export.excel');
+        Route::get('/export/pdf', [TransactionController::class, 'exportPdf'])->name('export.pdf');
+        
+        Route::post('/', [TransactionController::class, 'store'])->name('store');
+        Route::get('/{transaction}/edit', [TransactionController::class, 'edit'])->name('edit');
+        Route::put('/{transaction}', [TransactionController::class, 'update'])->name('update');
+        Route::delete('/{transaction}', [TransactionController::class, 'destroy'])->name('destroy');
+    });
 });

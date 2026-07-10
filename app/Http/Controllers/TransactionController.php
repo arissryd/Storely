@@ -39,7 +39,8 @@ class TransactionController extends Controller
             'type' => 'required|in:sales,stock_in',
             'product_id' => 'required|exists:products,id',
             'qty' => 'required|integer|min:1',
-            'merchant_code' => 'required_if:type,sales', // Wajib diisi jika tipenya sales
+            'merchant_code' => 'required_if:type,sales', 
+            // Wajib diisi jika tipenya sales
         ]);
 
         // 2. Ambil data produk untuk manipulasi stok
@@ -58,7 +59,7 @@ if ($request->type === 'sales') {
     // Ganti 'stok' jadi 'stock'
     $product->increment('stock', $request->qty);
 }
-        // 4. Otomatis Pasang Nomor Transaksi / Kode Stok sesuai kriteria UAS
+        // 4. Otomatis Pasang Nomor Transaksi / 
         $prefix = $request->type === 'sales' ? 'TRX-' : 'STK-';
         $transaction_number = $prefix . rand(1000000000, 9999999999);
 
@@ -69,8 +70,50 @@ if ($request->type === 'sales') {
             'product_id' => $request->product_id,
             'qty' => $request->qty,
             'merchant_code' => $request->type === 'sales' ? $request->merchant_code : null,
+            'type'               => $request->type, 
         ]);
 
         return redirect()->route('transactions.index')->with('success', 'Transaksi berhasil disimpan!');
+    }
+
+    public function exportExcel()
+    {
+        $fileName = 'laporan_penjualan_' . date('Y-m-d') . '.csv';
+        $transactions = \App\Models\Transaction::with('product')->where('type', 'sales')->get();
+
+        $headers = [
+            "Content-type"        => "text/csv",
+            "Content-Disposition" => "attachment; filename=$fileName",
+            "Pragma"              => "no-cache",
+            "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
+            "Expires"             => "0"
+        ];
+
+        $columns = ['Nomor Transaksi', 'Tanggal', 'Produk', 'Qty', 'Merchant Code'];
+
+        $callback = function() use($transactions, $columns) {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, $columns);
+
+            foreach ($transactions as $transaction) {
+                fputcsv($file, [
+                    'TRX-' . str_pad($transaction->id, 4, '0', STR_PAD_LEFT), // Nomor Transaksi otomatis
+                    $transaction->created_at->format('Y-m-d'), // Tanggal (auto)
+                    $transaction->product->name ?? 'Produk Dihapus', // Produk
+                    $transaction->qty, // Qty
+                    $transaction->merchant_code
+                ]);
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
+    public function exportPdf()
+    {
+        $transactions = \App\Models\Transaction::with('product')->where('type', 'sales')->get();
+        return view('transactions.print', compact('transactions'));
     }
 }

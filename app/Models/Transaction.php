@@ -10,7 +10,8 @@ class Transaction extends Model
         'transaction_number',
         'product_id',
         'qty',
-        'merchant_code'
+        'merchant_code',
+        'type',
     ];
 
     public function product()

@@ -24,6 +24,8 @@ return new class extends Migration
 
         $table->string('merchant_code');
 
+        $table->string('type');
+
         $table->timestamps();
     });
 }
