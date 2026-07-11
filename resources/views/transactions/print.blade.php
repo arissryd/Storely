@@ -36,7 +36,7 @@
                 <td>{{ $transaction->created_at->format('d-m-Y') }}</td>
                 <td><strong>{{ $transaction->product->name ?? 'Produk Dihapus' }}</strong></td>
                 <td>{{ $transaction->qty }} Pcs</td>
-                <td>MCH-{{ strtoupper(auth()->user()->name ?? 'STORELY') }}</td>
+                <td>{{ $transaction->merchant_code ?? '-' }}</td>
             </tr>
             @endforeach
         </tbody>

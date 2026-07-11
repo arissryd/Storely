@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use Barryvdh\DomPDF\Facade\Pdf;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\TransactionsExport;
 use App\Models\Transaction;
 use App\Models\Product; // Wajib import model Product
 use Illuminate\Http\Request;
@@ -77,43 +80,20 @@ if ($request->type === 'sales') {
     }
 
     public function exportExcel()
-    {
-        $fileName = 'laporan_penjualan_' . date('Y-m-d') . '.csv';
-        $transactions = \App\Models\Transaction::with('product')->where('type', 'sales')->get();
+{
+    $fileName = 'laporan_penjualan_' . date('Y-m-d') . '.xlsx';
+    
+    // Pake package: Jauh lebih pendek karena logic-nya udah pindah ke file TransactionsExport
+    return Excel::download(new TransactionsExport, $fileName);
+}
 
-        $headers = [
-            "Content-type"        => "text/csv",
-            "Content-Disposition" => "attachment; filename=$fileName",
-            "Pragma"              => "no-cache",
-            "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
-            "Expires"             => "0"
-        ];
-
-        $columns = ['Nomor Transaksi', 'Tanggal', 'Produk', 'Qty', 'Merchant Code'];
-
-        $callback = function() use($transactions, $columns) {
-            $file = fopen('php://output', 'w');
-            fputcsv($file, $columns);
-
-            foreach ($transactions as $transaction) {
-                fputcsv($file, [
-                    'TRX-' . str_pad($transaction->id, 4, '0', STR_PAD_LEFT), // Nomor Transaksi otomatis
-                    $transaction->created_at->format('Y-m-d'), // Tanggal (auto)
-                    $transaction->product->name ?? 'Produk Dihapus', // Produk
-                    $transaction->qty, // Qty
-                    $transaction->merchant_code
-                ]);
-            }
-
-            fclose($file);
-        };
-
-        return response()->stream($callback, 200, $headers);
-    }
-
-    public function exportPdf()
-    {
-        $transactions = \App\Models\Transaction::with('product')->where('type', 'sales')->get();
-        return view('transactions.print', compact('transactions'));
-    }
+public function exportPdf()
+{
+    $fileName = 'laporan_penjualan_' . date('Y-m-d') . '.pdf';
+    $transactions = Transaction::with('product')->where('type', 'sales')->get();
+    
+    // Pake package: Murni diproses backend jadi file PDF asli, bukan cetakan browser
+    $pdf = Pdf::loadView('transactions.print', compact('transactions'));
+    return $pdf->download($fileName);
+}
 }
